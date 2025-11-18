@@ -1,0 +1,75 @@
+<!-- BOTÓN HAMBURGUESA -->
+<button
+  (click)="toggleSidebar()"
+  class="fixed top-4 left-4 z-50 text-white p-3 rounded-full shadow-lg flex items-center justify-center transition"
+  style="background-color: #333;"
+>
+  <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+</button>
+
+<!-- SIDEBAR -->
+<div
+  class="fixed top-0 left-0 h-full w-64 text-white shadow-xl transform transition-transform duration-300 ease-in-out z-40"
+  [class.-translate-x-full]="!isOpen"
+  style="
+    background: linear-gradient(180deg, #202020 0%, #131313 50%, #161616 100%);
+    backdrop-filter: blur(6px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  "
+>
+  <!-- HEADER -->
+  <div
+    class="p-8 mt-40 text-xl font-semibold border-b flex items-center gap-3"
+    style="
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+    "
+  >
+    <mat-icon>school</mat-icon>
+    DevSchool Admin
+  </div>
+
+  <!-- NAV -->
+  <nav class="flex flex-col p-4 space-y-3" style="color: #ffffff;">
+
+    <a
+      class="p-3 rounded-lg transition cursor-pointer flex items-center gap-3"
+      style="border-radius: 10px;"
+      onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.12)'"
+      onmouseout="this.style.backgroundColor='transparent'"
+    >
+      <mat-icon>home</mat-icon>
+      Inicio
+    </a>
+
+    <a
+      class="p-3 rounded-lg transition cursor-pointer flex items-center gap-3"
+      onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.12)'"
+      onmouseout="this.style.backgroundColor='transparent'"
+    >
+      <mat-icon>group</mat-icon>
+      Usuarios
+    </a>
+
+    <a
+      class="p-3 rounded-lg transition cursor-pointer flex items-center gap-3"
+      onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.12)'"
+      onmouseout="this.style.backgroundColor='transparent'"
+    >
+      <mat-icon>menu_book</mat-icon>
+      Cursos
+    </a>
+
+    <a
+      class="p-3 rounded-lg transition cursor-pointer flex items-center gap-3"
+      onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.12)'"
+      onmouseout="this.style.backgroundColor='transparent'"
+    >
+      <mat-icon>settings</mat-icon>
+      Configuración
+    </a>
+
+  </nav>
+</div>

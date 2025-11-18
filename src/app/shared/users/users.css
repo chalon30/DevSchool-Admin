@@ -1,0 +1,182 @@
+/* ============================================================
+   PALETA MODERNA – ESTILO DASHBOARD
+   ============================================================ */
+:root {
+  --bg-main: #0d1117;
+  --bg-card: #161b22;
+  --bg-header: #262c36;
+  --bg-hover: #2b323d;
+
+  --blue: #3EA6FF;
+  --orange: #FFB86C;
+  --red: #FF6871;
+  --green: #32D296;
+
+  --text-main: #ffffff;
+  --text-muted: #e5e5e5;
+  --text-soft: #f5f5f5;
+}
+
+/* Fondo general */
+body {
+  background-color: var(--bg-main) !important;
+  margin: 0;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  color: var(--text-main) !important;
+  overflow-x: hidden !important;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+mat-card {
+  max-width: 950px !important;
+  width: 96% !important;
+  margin: 40px auto !important;
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-radius: 18px !important;
+  padding: 30px !important;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.712) !important;
+  border: 1px solid rgba(39, 39, 39, 0.25);
+  margin-top: 90px !important;
+
+  /* FIX PARA SCROLL */
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Título */
+h2 {
+  color: var(--text-main) !important;
+  font-size: 1.7rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 20px !important;
+}
+
+/* ============================================================
+   TABLA (Estilos estándar)
+   ============================================================ */
+table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background-color: rgba(37, 37, 37, 0.274) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  font-size: 0.92rem;
+  color: var(--text-main) !important;
+
+  /* FIX SCROLL HORIZONTAL */
+  display: block !important;
+  overflow-x: auto !important;
+}
+
+th {
+  background-color: var(--bg-header) !important;
+  padding: 14px 12px !important;
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+td {
+  padding: 14px 12px !important;
+  color: var(--text-soft) !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 0.15) !important;
+}
+
+/* Hover fila */
+tr:hover td {
+  background-color: var(--bg-hover) !important;
+}
+
+/* ============================================================
+   FORMULARIO CAMBIO CONTRASEÑA – DARK GLASS
+   ============================================================ */
+.form-cambio {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  padding: 25px !important;
+  border-radius: 14px !important;
+  margin-top: 20px !important;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-campo {
+  width: 48%;
+  min-width: 280px;
+}
+
+/* Inputs y labels */
+mat-form-field .mat-input-element {
+  color: var(--text-main) !important;
+}
+
+mat-form-field .mat-form-field-label {
+  color: var(--text-main) !important;
+}
+
+/* Label flotante */
+.mat-form-field.mat-focused .mat-form-field-label {
+  color: var(--blue) !important;
+}
+
+/* Borde activo */
+mat-form-field .mat-form-field-ripple {
+  background-color: var(--blue) !important;
+}
+
+/* Placeholder */
+::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Error text */
+.mat-error {
+  color: var(--red) !important;
+  font-weight: 600;
+}
+
+/* ============================================================
+   RESPONSIVE – CELULARES (STACK)
+   ============================================================ */
+@media (max-width: 700px) {
+  .form-campo {
+    width: 100% !important;
+  }
+}
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+button {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  font-size: 0.85rem !important;
+  color: var(--text-main) !important;
+}
+
+.mat-primary { background-color: var(--blue) !important; color: #000 !important; }
+.mat-accent  { background-color: var(--orange) !important; color: #000 !important; }
+.mat-warn    { background-color: var(--red) !important; color: #fff !important; }
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge-activo {
+  background: var(--green);
+  color: #000;
+}
+
+.badge-inactivo {
+  background: var(--red);
+  color: #fff;
+}

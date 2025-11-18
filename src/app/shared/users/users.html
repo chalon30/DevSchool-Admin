@@ -1,0 +1,167 @@
+<mat-card class="bg-gray-900 text-white p-6 rounded-xl shadow-xl mt-4 md:mt-20">
+
+  <!-- TÍTULO -->
+  <h2 class="text-2xl font-bold mb-6 flex items-center gap-2 !text-white">
+    <mat-icon class="!text-white">people</mat-icon>
+    Usuarios Registrados
+  </h2>
+
+  <!-- SPINNER -->
+  <div *ngIf="cargando" class="flex justify-center py-10">
+    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+  </div>
+
+  <!-- TABLA -->
+  <div *ngIf="!cargando" class="overflow-x-auto rounded-lg border border-gray-700">
+    <table mat-table [dataSource]="usuarios" class="min-w-full text-white">
+
+      <!-- ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef 
+            class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">
+          ID
+        </th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3 !text-white">
+          {{ u.id }}
+        </td>
+      </ng-container>
+
+      <!-- Nombre -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Nombre</th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3 !text-white">{{ u.nombre }}</td>
+      </ng-container>
+
+      <!-- Apellidos -->
+      <ng-container matColumnDef="apellidos">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Apellidos</th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3 !text-white">{{ u.apellidos }}</td>
+      </ng-container>
+
+      <!-- Correo -->
+      <ng-container matColumnDef="correo">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Correo</th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3 !text-white">{{ u.correo }}</td>
+      </ng-container>
+
+      <!-- Rol -->
+      <ng-container matColumnDef="rol">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Rol</th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3 !text-white">{{ u.rol }}</td>
+      </ng-container>
+
+      <!-- Activo -->
+      <ng-container matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Activo</th>
+        <td mat-cell *matCellDef="let u" class="px-4 py-3">
+          <span
+            class="px-3 py-1 rounded-full text-sm font-semibold !text-white"
+            [class.bg-green-600]="u.activo"
+            [class.bg-red-600]="!u.activo"
+          >
+            {{ u.activo ? 'Sí' : 'No' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef class="px-4 py-3 bg-gray-800 uppercase text-sm !text-white">Acciones</th>
+
+        <td mat-cell *matCellDef="let u" class="!text-white">
+
+          <!-- Desktop -->
+          <div class="hidden md:flex gap-2">
+
+            <button
+              mat-raised-button
+              class="!bg-blue-600 !text-white"
+              (click)="activarUsuario(u)"
+              [disabled]="u.activo"
+            >
+              Activar
+            </button>
+
+            <button
+              mat-raised-button
+              class="!bg-amber-600 !text-white"
+              (click)="abrirCambioContrasena(u)"
+            >
+              Contraseña
+            </button>
+
+            <button
+              mat-raised-button
+              class="!bg-red-600 !text-white"
+              (click)="eliminarUsuario(u)"
+            >
+              Eliminar
+            </button>
+          </div>
+
+          <!-- Móvil -->
+          <div class="md:hidden">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon class="!text-white">more_vert</mat-icon>
+            </button>
+
+            <mat-menu #menu="matMenu" class="!text-white">
+              <button mat-menu-item (click)="activarUsuario(u)" [disabled]="u.activo">
+                <mat-icon class="!text-white">check_circle</mat-icon>
+                Activar
+              </button>
+
+              <button mat-menu-item (click)="abrirCambioContrasena(u)">
+                <mat-icon class="!text-white">lock</mat-icon>
+                Cambiar contraseña
+              </button>
+
+              <button mat-menu-item (click)="eliminarUsuario(u)">
+                <mat-icon class="!text-white">delete</mat-icon>
+                Eliminar
+              </button>
+            </mat-menu>
+          </div>
+
+          <!-- Formulario de cambio de contraseña -->
+          <div *ngIf="mostrarCambioId === u.id" class="form-cambio mt-4 text-white">
+
+            <div class="form-campo">
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label class="">Nueva contraseña</mat-label>
+                <input matInput type="password" class="" [(ngModel)]="nueva" />
+              </mat-form-field>
+            </div>
+
+            <div class="form-campo">
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label class="">Confirmar contraseña</mat-label>
+                <input matInput type="password" class="" [(ngModel)]="confirmar" />
+              </mat-form-field>
+            </div>
+
+            <div class="flex gap-3 w-full">
+              <button mat-raised-button class="!bg-blue-600 !text-white" (click)="cambiarContrasena(u)">
+                Guardar
+              </button>
+
+              <button mat-button class="!bg-red-600 " (click)="cancelarCambio()">
+                Cancelar
+              </button>
+            </div>
+
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr 
+        mat-row 
+        *matRowDef="let row; columns: displayedColumns;" 
+        class="hover:bg-gray-700 !text-white">
+      </tr>
+
+    </table>
+  </div>
+
+</mat-card>
