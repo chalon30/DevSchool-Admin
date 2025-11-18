@@ -37,4 +37,8 @@ export class UsuarioService {
       confirmar,
     });
   }
+
+  listarPendientes(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.apiUrl}/pendientes`);
+  }
 }
