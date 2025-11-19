@@ -10,27 +10,34 @@ import { Usuario } from '../../core/models/usuario.model';
   standalone: true,
   templateUrl: './users.html',
   styleUrls: ['./users.css'],
-  imports: [
-    CommonModule,
-    FormsModule,
-  ],
+  imports: [CommonModule, FormsModule],
 })
 export class User implements OnInit {
-
   private usuarioService = inject(UsuarioService);
 
   usuarios: Usuario[] = [];
-  cargando: boolean = false;
+  cargando = false;
 
   // Cambio de contraseña
   mostrarCambioId: number | null = null;
-  nueva: string = '';
-  confirmar: string = '';
+  nueva = '';
+  confirmar = '';
 
   // UX: Indicador de acción en proceso
   accionEnProceso?: number | null = null;
 
+  // 👉 info del usuario logueado
+  currentUserId: number | null = null;
+  currentUserRol: string | null = null;
+
   ngOnInit(): void {
+    // Leer del localStorage (login admin/profesor)
+    const id = localStorage.getItem('admin_id');
+    const rol = localStorage.getItem('admin_rol');
+
+    this.currentUserId = id ? Number(id) : null;
+    this.currentUserRol = rol ? rol.toUpperCase() : null;
+
     this.cargando = true;
 
     this.usuarioService.usuarios$.subscribe({
@@ -46,6 +53,26 @@ export class User implements OnInit {
 
     // Cargar la primera vez
     this.usuarioService.listar().subscribe();
+  }
+
+  // 🔒 Saber si un usuario es admin (por rol o flag esAdmin)
+  esAdmin(u: Usuario): boolean {
+    const rol = (u.rol ?? '').toUpperCase();
+    const flag = (u as any).esAdmin === true;
+    return rol === 'ADMIN' || flag;
+  }
+
+  /**
+   * ✅ Regla nueva:
+   * - PROFESOR y ADMIN pueden cambiar contraseñas
+   * - PERO nunca de un usuario ADMIN
+   */
+  puedeCambiarPassword(usuario: Usuario): boolean {
+    // Si el target es ADMIN → prohibido
+    if (this.esAdmin(usuario)) return false;
+
+    const rolActual = (this.currentUserRol ?? '').toUpperCase();
+    return rolActual === 'ADMIN' || rolActual === 'PROFESOR';
   }
 
   activarUsuario(usuario: Usuario) {
@@ -67,6 +94,13 @@ export class User implements OnInit {
 
   eliminarUsuario(usuario: Usuario) {
     if (!usuario.id) return;
+
+    // 🚫 No permitir eliminar ADMIN
+    if (this.esAdmin(usuario)) {
+      alert('El usuario ADMIN no se puede eliminar.');
+      return;
+    }
+
     if (!confirm(`¿Eliminar al usuario ${usuario.nombre} ${usuario.apellidos}?`)) return;
 
     this.accionEnProceso = usuario.id;
@@ -83,12 +117,24 @@ export class User implements OnInit {
   }
 
   abrirCambioContrasena(usuario: Usuario) {
+    // ✅ Profes/admin pueden cambiar, excepto admins
+    if (!this.puedeCambiarPassword(usuario)) {
+      alert('No tienes permiso para cambiar la contraseña de este usuario.');
+      return;
+    }
+
     this.mostrarCambioId = usuario.id!;
     this.nueva = '';
     this.confirmar = '';
   }
 
   cambiarContrasena(usuario: Usuario) {
+    // Seguridad extra
+    if (!this.puedeCambiarPassword(usuario)) {
+      alert('No tienes permiso para cambiar la contraseña de este usuario.');
+      return;
+    }
+
     if (!this.nueva || !this.confirmar) {
       alert('Todos los campos son obligatorios');
       return;

@@ -33,13 +33,21 @@ export class LoginPage {
     this.authService.loginAdmin(this.correo, this.password).subscribe({
       next: (resp) => {
         this.cargando = false;
-        // Si llegó aquí, es ADMIN o PROFESOR
-        this.router.navigate(['/home']); // o donde empiece tu panel
+
+        // 🧠 Guardar datos del usuario admin/profesor
+        // resp viene del backend: { token, id, nombre, apellidos, correo, rol, esAdmin }
+        localStorage.setItem('admin_token', resp.token);
+        localStorage.setItem('admin_id', String(resp.id));
+        localStorage.setItem('admin_rol', resp.rol ?? '');
+        localStorage.setItem('admin_nombre', resp.nombre ?? '');
+        localStorage.setItem('admin_correo', resp.correo ?? '');
+
+        // Ir al home del panel
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error(err);
         this.cargando = false;
-        // Mostramos mensaje del backend si viene
         this.error =
           err.error?.error ||
           'No se pudo iniciar sesión. Verifica tus credenciales.';
