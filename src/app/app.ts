@@ -1,13 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Sidebar } from "./shared/sidebar/sidebar";
-import { User } from "./shared/users/users";
+import { Sidebar } from './shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, User],
+  standalone: true,
+  imports: [RouterOutlet, Sidebar],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']   // CORREGIDO: plural
 })
 export class App {
   protected readonly title = signal('devschool-admin');

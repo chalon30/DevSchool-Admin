@@ -1,0 +1,330 @@
+<div class="max-w-6xl mx-auto px-4 py-20">
+
+  <!-- Card -->
+  <div class="bg-slate-900/95 border border-slate-800 rounded-2xl shadow-2xl p-4 sm:p-5 md:p-7 text-slate-50">
+
+    <!-- Título -->
+    <div class="flex items-center gap-3 mb-6">
+      <div
+        class="h-9 w-9 rounded-full bg-indigo-500/20 border border-indigo-400/60 flex items-center justify-center text-indigo-300 text-lg"
+      >
+        👥
+      </div>
+      <div>
+        <h2 class="text-lg sm:text-xl md:text-2xl font-semibold">
+          Usuarios registrados
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Gestión de cuentas, activación y cambio de contraseña.
+        </p>
+      </div>
+    </div>
+
+    <!-- Spinner -->
+    <div *ngIf="cargando" class="flex flex-col items-center justify-center py-10 gap-3">
+      <div
+        class="h-10 w-10 rounded-full border-4 border-slate-600 border-t-indigo-400 animate-spin"
+      ></div>
+      <p class="text-sm text-slate-300">Cargando usuarios...</p>
+    </div>
+
+    <!-- Contenido -->
+    <ng-container *ngIf="!cargando">
+
+      <!-- VISTA DESKTOP: TABLA (md y arriba) -->
+      <div
+        class="hidden md:block mt-2 rounded-2xl border border-slate-800 bg-slate-950/70 shadow-inner overflow-hidden"
+      >
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead
+              class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-slate-100 sticky top-0 z-10"
+            >
+              <tr>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  ID
+                </th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Nombre
+                </th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Apellidos
+                </th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Correo
+                </th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Rol
+                </th>
+                <th class="px-4 py-3.5 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Activo
+                </th>
+                <th class="px-4 py-3.5 text-right text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let u of usuarios"
+                class="border-t border-slate-800/80 hover:bg-slate-900/80 transition-colors ease-out"
+              >
+                <!-- ID -->
+                <td class="px-4 py-3.5 align-middle text-center text-slate-400 text-xs">
+                  #{{ u.id }}
+                </td>
+
+                <!-- Nombre -->
+                <td class="px-4 py-3.5 align-middle">
+                  <span class="text-slate-100 text-sm font-medium">
+                    {{ u.nombre }}
+                  </span>
+                </td>
+
+                <!-- Apellidos -->
+                <td class="px-4 py-3.5 align-middle text-slate-200 text-sm">
+                  {{ u.apellidos }}
+                </td>
+
+                <!-- Correo -->
+                <td class="px-4 py-3.5 align-middle">
+                  <span class="text-[13px] text-slate-300 break-all">
+                    {{ u.correo }}
+                  </span>
+                </td>
+
+                <!-- Rol -->
+                <td class="px-4 py-3.5 align-middle">
+                  <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium
+                               bg-slate-800/80 border border-slate-600/80 text-slate-200">
+                    {{ u.rol }}
+                  </span>
+                </td>
+
+                <!-- Activo -->
+                <td class="px-4 py-3.5 align-middle">
+                  <span
+                    class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold"
+                    [ngClass]="{
+                      'bg-emerald-500/15 text-emerald-300 border border-emerald-400/60': u.activo,
+                      'bg-rose-500/15 text-rose-300 border border-rose-400/60': !u.activo
+                    }"
+                  >
+                    {{ u.activo ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+
+                <!-- Acciones -->
+                <td class="px-4 py-3.5 align-middle">
+                  <div class="flex justify-end gap-2">
+                    <button
+                      class="px-3 py-1.5 rounded-md text-[11px] font-semibold
+                             bg-indigo-600 hover:bg-indigo-500 text-white
+                             disabled:bg-slate-700 disabled:text-slate-400
+                             transition-colors"
+                      (click)="activarUsuario(u)"
+                      [disabled]="u.activo || isAccionEnProceso(u)"
+                    >
+                      {{ isAccionEnProceso(u) ? 'Procesando…' : 'Activar' }}
+                    </button>
+
+                    <button
+                      class="px-3 py-1.5 rounded-md text-[11px] font-semibold
+                             bg-amber-500 hover:bg-amber-400 text-slate-900
+                             transition-colors"
+                      (click)="abrirCambioContrasena(u)"
+                    >
+                      Contraseña
+                    </button>
+
+                    <button
+                      class="px-3 py-1.5 rounded-md text-[11px] font-semibold
+                             bg-rose-600 hover:bg-rose-500 text-white
+                             transition-colors"
+                      (click)="eliminarUsuario(u)"
+                      [disabled]="isAccionEnProceso(u)"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
+                  <!-- Form cambio contraseña (desktop) -->
+                  <div
+                    *ngIf="mostrarCambioId === u.id"
+                    class="mt-3 rounded-lg bg-slate-950/90 border border-slate-700 p-3 space-y-3"
+                  >
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-[11px] font-medium text-slate-300 mb-1">
+                          Nueva contraseña
+                        </label>
+                        <input
+                          type="password"
+                          [(ngModel)]="nueva"
+                          class="w-full px-3 py-1.5 rounded-md bg-slate-900 border border-slate-700
+                                 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label class="block text-[11px] font-medium text-slate-300 mb-1">
+                          Confirmar contraseña
+                        </label>
+                        <input
+                          type="password"
+                          [(ngModel)]="confirmar"
+                          class="w-full px-3 py-1.5 rounded-md bg-slate-900 border border-slate-700
+                                 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-1">
+                      <button
+                        class="px-3 py-1.5 rounded-md text-[11px] font-semibold
+                               bg-indigo-600 hover:bg-indigo-500 text-white
+                               transition-colors"
+                        (click)="cambiarContrasena(u)"
+                      >
+                        Guardar
+                      </button>
+
+                      <button
+                        class="px-3 py-1.5 rounded-md text-[11px] font-semibold
+                               bg-slate-700 hover:bg-slate-600 text-slate-100
+                               transition-colors"
+                        (click)="cancelarCambio()"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VISTA MÓVIL: CARDS (igual que antes) -->
+      <div class="md:hidden mt-4 space-y-3">
+        <div
+          *ngFor="let u of usuarios"
+          class="rounded-xl border border-slate-700 bg-slate-900/80 p-4 space-y-3"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-slate-50">
+                {{ u.nombre }} {{ u.apellidos }}
+              </p>
+              <p class="text-xs text-slate-400">
+                ID: {{ u.id }}
+              </p>
+            </div>
+            <span
+              class="inline-flex px-3 py-1 rounded-full text-[11px] font-semibold"
+              [ngClass]="{
+                'bg-emerald-500/20 text-emerald-300 border border-emerald-400/70': u.activo,
+                'bg-rose-500/20 text-rose-300 border border-rose-400/70': !u.activo
+              }"
+            >
+              {{ u.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+
+          <div class="text-xs text-slate-300 space-y-1">
+            <p class="break-all">
+              <span class="font-medium text-slate-200">Correo: </span>{{ u.correo }}
+            </p>
+            <p>
+              <span class="font-medium text-slate-200">Rol: </span>{{ u.rol }}
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row flex-wrap gap-2 mt-2">
+            <button
+              class="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs font-semibold
+                     bg-indigo-600 hover:bg-indigo-500 text-white disabled:bg-slate-600 disabled:text-slate-300
+                     transition-colors"
+              (click)="activarUsuario(u)"
+              [disabled]="u.activo || isAccionEnProceso(u)"
+            >
+              {{ isAccionEnProceso(u) ? 'Procesando...' : 'Activar' }}
+            </button>
+
+            <button
+              class="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs font-semibold
+                     bg-amber-500 hover:bg-amber-400 text-slate-900
+                     transition-colors"
+              (click)="abrirCambioContrasena(u)"
+            >
+              Contraseña
+            </button>
+
+            <button
+              class="w-full sm:w-auto px-3 py-1.5 rounded-md text-xs font-semibold
+                     bg-rose-600 hover:bg-rose-500 text-white
+                     transition-colors"
+              (click)="eliminarUsuario(u)"
+              [disabled]="isAccionEnProceso(u)"
+            >
+              Eliminar
+            </button>
+          </div>
+
+          <div
+            *ngIf="mostrarCambioId === u.id"
+            class="mt-3 rounded-lg bg-slate-950/80 border border-slate-700 p-3 space-y-3"
+          >
+            <div>
+              <label class="block text-[11px] font-medium text-slate-300 mb-1">
+                Nueva contraseña
+              </label>
+              <input
+                type="password"
+                [(ngModel)]="nueva"
+                class="w-full px-3 py-1.5 rounded-md bg-slate-800 border border-slate-600
+                       text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-medium text-slate-300 mb-1">
+                Confirmar contraseña
+              </label>
+              <input
+                type="password"
+                [(ngModel)]="confirmar"
+                class="w-full px-3 py-1.5 rounded-md bg-slate-800 border border-slate-600
+                       text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              />
+            </div>
+
+            <div class="flex flex-wrap gap-2 justify-end">
+              <button
+                class="px-3 py-1.5 rounded-md text-xs font-semibold
+                       bg-indigo-600 hover:bg-indigo-500 text-white
+                       transition-colors"
+                (click)="cambiarContrasena(u)"
+              >
+                Guardar
+              </button>
+
+              <button
+                class="px-3 py-1.5 rounded-md text-xs font-semibold
+                       bg-slate-700 hover:bg-slate-600 text-slate-100
+                       transition-colors"
+                (click)="cancelarCambio()"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>

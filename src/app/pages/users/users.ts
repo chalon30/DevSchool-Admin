@@ -1,20 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { UsuarioService } from '../../core/services/usuario.service';
 import { Usuario } from '../../core/models/usuario.model';
-
-/* Angular Material */
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatFormFieldModule } from '@angular/material/form-field';
-
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
@@ -24,14 +13,6 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FormsModule,
-    MatTableModule,
-    MatButtonModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatInputModule,
-    MatIconModule,
-    MatMenuModule,
-    MatFormFieldModule
   ],
 })
 export class User implements OnInit {
@@ -40,16 +21,6 @@ export class User implements OnInit {
 
   usuarios: Usuario[] = [];
   cargando: boolean = false;
-
-  displayedColumns: string[] = [
-    'id',
-    'nombre',
-    'apellidos',
-    'correo',
-    'rol',
-    'activo',
-    'acciones'
-  ];
 
   // Cambio de contraseña
   mostrarCambioId: number | null = null;
@@ -62,7 +33,6 @@ export class User implements OnInit {
   ngOnInit(): void {
     this.cargando = true;
 
-    // Nos suscribimos al BehaviorSubject del servicio para recibir automáticamente cambios
     this.usuarioService.usuarios$.subscribe({
       next: (data) => {
         this.usuarios = data;
@@ -78,7 +48,6 @@ export class User implements OnInit {
     this.usuarioService.listar().subscribe();
   }
 
-  /** Activar usuario */
   activarUsuario(usuario: Usuario) {
     if (!usuario.id) return;
     if (!confirm(`¿Desea activar al usuario ${usuario.nombre} ${usuario.apellidos}?`)) return;
@@ -87,7 +56,7 @@ export class User implements OnInit {
     this.usuarioService.activarUsuario(usuario.id).subscribe({
       next: () => {
         this.accionEnProceso = null;
-        this.listarUsuarios(); // recargar tabla
+        this.listarUsuarios();
       },
       error: (err) => {
         console.error('Error al activar usuario:', err);
@@ -96,7 +65,6 @@ export class User implements OnInit {
     });
   }
 
-  /** Eliminar usuario */
   eliminarUsuario(usuario: Usuario) {
     if (!usuario.id) return;
     if (!confirm(`¿Eliminar al usuario ${usuario.nombre} ${usuario.apellidos}?`)) return;
@@ -105,7 +73,7 @@ export class User implements OnInit {
     this.usuarioService.eliminarUsuario(usuario.id).subscribe({
       next: () => {
         this.accionEnProceso = null;
-        this.listarUsuarios(); // recargar tabla
+        this.listarUsuarios();
       },
       error: (err) => {
         console.error('Error al eliminar usuario:', err);
@@ -114,14 +82,12 @@ export class User implements OnInit {
     });
   }
 
-  /** Mostrar formulario cambiar contraseña */
   abrirCambioContrasena(usuario: Usuario) {
     this.mostrarCambioId = usuario.id!;
     this.nueva = '';
     this.confirmar = '';
   }
 
-  /** Cambiar contraseña */
   cambiarContrasena(usuario: Usuario) {
     if (!this.nueva || !this.confirmar) {
       alert('Todos los campos son obligatorios');
@@ -142,11 +108,10 @@ export class User implements OnInit {
     this.usuarioService.cambiarContrasena(usuario.id!, this.nueva, this.confirmar).subscribe({
       next: () => {
         alert('Contraseña actualizada correctamente');
-        // Reiniciar el formulario y recargar la tabla
         this.mostrarCambioId = null;
         this.nueva = '';
         this.confirmar = '';
-        this.listarUsuarios(); // aseguramos que la tabla se actualice
+        this.listarUsuarios();
         this.accionEnProceso = null;
       },
       error: (err) => {
@@ -156,19 +121,16 @@ export class User implements OnInit {
     });
   }
 
-  /** Cancelar cambio de contraseña */
   cancelarCambio() {
     this.mostrarCambioId = null;
     this.nueva = '';
     this.confirmar = '';
   }
 
-  /** Verificar si hay acción en proceso para un usuario */
   isAccionEnProceso(usuario: Usuario): boolean {
     return this.accionEnProceso === usuario.id;
   }
 
-  /** Refrescar usuarios manualmente */
   listarUsuarios(): void {
     this.cargando = true;
     this.usuarioService.listar().subscribe({

@@ -1,13 +1,18 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';    // ⬅️ AÑADIR ESTO
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [
+    CommonModule,   // ⬅️ Y ESTO
+    RouterModule,
+  ],
   templateUrl: './sidebar.html',
 })
 export class Sidebar {
+  // Arranca abierto para desktop
   isOpen = false;
 
   toggleSidebar() {

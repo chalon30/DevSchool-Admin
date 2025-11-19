@@ -3,13 +3,16 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
-body {
-  margin: 0;
-  padding: 0;
-  background-image: url('/fondo.webp');
-  background-size: cover;       /* La imagen cubre toda la pantalla */
-  background-position: center;  /* Centrada */
-  background-repeat: no-repeat; /* No se repite */
-  background-attachment: fixed; /* Efecto fondo fijo */
-  font-family: 'Roboto', sans-serif;
+/* Fondo con overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(15, 23, 42, 0.85)),
+    url('/fondo.webp'); /* si usas Angular, mejor: url('assets/62.webp') */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }

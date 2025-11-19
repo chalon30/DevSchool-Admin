@@ -1,0 +1,15 @@
+/* Puedes dejar este archivo vacío si todo va con Tailwind */
+
+/* Ejemplo: ajustar el scroll de la tabla en tema oscuro */
+::-webkit-scrollbar {
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 999px;
+}
