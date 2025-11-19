@@ -1,0 +1,206 @@
+<div class="max-w-6xl mx-auto px-4 py-10 text-slate-50">
+
+  <!-- Encabezado -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div class="flex items-center gap-3">
+      <div
+        class="h-10 w-10 rounded-full bg-indigo-500/20 border border-indigo-400/70
+               flex items-center justify-center text-indigo-300 text-xl"
+      >
+        🎓
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-semibold">
+          Bienvenido, {{ nombre }}
+        </h1>
+        <p class="text-sm text-slate-400">
+          Panel de administración DevSchool · Rol:
+          <span class="font-medium text-indigo-300">{{ rol || '—' }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid principal -->
+  <div class="grid gap-6 md:grid-cols-3">
+
+    <!-- Tarjeta: Usuarios -->
+    <div
+      class="rounded-2xl bg-slate-900/80 border border-slate-700/70 shadow-xl p-5
+             flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Gestión
+          </p>
+          <h2 class="text-lg font-semibold text-slate-50">
+            Usuarios
+          </h2>
+        </div>
+        <div
+          class="h-8 w-8 rounded-full bg-sky-500/20 border border-sky-400/70
+                 flex items-center justify-center text-sky-300"
+        >
+          <!-- Ícono usuarios -->
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="3" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-sm text-slate-400 mb-4">
+        Administra cuentas, activa usuarios y cambia contraseñas desde el módulo de usuarios.
+      </p>
+      <a
+        routerLink="/users"
+        class="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2
+               text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white
+               transition-colors"
+      >
+        Ir a usuarios
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12h14" />
+          <path d="M13 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Tarjeta: Cursos -->
+    <div
+      class="rounded-2xl bg-slate-900/80 border border-slate-700/70 shadow-xl p-5
+             flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Contenido
+          </p>
+          <h2 class="text-lg font-semibold text-slate-50">
+            Cursos & Inscritos
+          </h2>
+        </div>
+        <div
+          class="h-8 w-8 rounded-full bg-emerald-500/20 border border-emerald-400/70
+                 flex items-center justify-center text-emerald-300"
+        >
+          <!-- Ícono libro -->
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v15H6.5A2.5 2.5 0 0 0 4 19.5z" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-sm text-slate-400 mb-4">
+        Revisa qué usuarios están inscritos en cada curso y el estado general de las inscripciones.
+      </p>
+      <a
+        routerLink="/cursos"
+        class="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2
+               text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white
+               transition-colors"
+      >
+        Ver cursos
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12h14" />
+          <path d="M13 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Tarjeta: Progreso & Configuración -->
+    <div
+      class="rounded-2xl bg-slate-900/80 border border-slate-700/70 shadow-xl p-5
+             flex flex-col justify-between"
+    >
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Seguimiento
+          </p>
+          <h2 class="text-lg font-semibold text-slate-50">
+            Progreso & Roles
+          </h2>
+        </div>
+        <div
+          class="h-8 w-8 rounded-full bg-purple-500/20 border border-purple-400/70
+                 flex items-center justify-center text-purple-300"
+        >
+          <!-- Ícono gráfico -->
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 3v18h18" />
+            <rect x="7" y="10" width="2.5" height="7" />
+            <rect x="11" y="7" width="2.5" height="10" />
+            <rect x="15" y="5" width="2.5" height="12" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-sm text-slate-400 mb-4">
+        Consulta el avance de los estudiantes en sus cursos y ajusta los roles entre ALUMNO y PROFESOR.
+      </p>
+
+      <div class="flex flex-wrap gap-2">
+        <a
+          routerLink="/progreso-admin"
+          class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2
+                 text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white
+                 transition-colors min-w-[120px]"
+        >
+          Ver progreso
+        </a>
+        <a
+          routerLink="/configuracion"
+          class="inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2
+                 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-100
+                 border border-slate-600 transition-colors min-w-[120px]"
+        >
+          Configuración
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</div>

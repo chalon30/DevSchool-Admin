@@ -1,0 +1,166 @@
+<div class="max-w-5xl mx-auto px-4 py-10 text-slate-50">
+  <!-- Card principal -->
+  <div class="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl p-5 md:p-7">
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-3 mb-6">
+      <div class="flex items-center gap-3">
+        <div
+          class="h-9 w-9 rounded-full bg-sky-500/20 border border-sky-400/60 flex items-center justify-center text-sky-300 text-lg"
+        >
+          ⚙️
+        </div>
+        <div>
+          <h2 class="text-xl md:text-2xl font-semibold">Configuración</h2>
+          <p class="text-sm text-slate-400">
+            Cambia el rol de los usuarios entre <span class="font-semibold">ALUMNO</span> y
+            <span class="font-semibold">PROFESOR</span>. Los usuarios
+            <span class="font-semibold">ADMIN</span> no se pueden modificar.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtro -->
+    <div class="mb-4 flex flex-col md:flex-row items-stretch md:items-end gap-3">
+      <div class="flex-1">
+        <label class="block text-xs font-medium text-slate-300 mb-1"> Buscar usuario </label>
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
+          placeholder="Nombre, apellidos o correo"
+        />
+      </div>
+
+      <button
+        class="px-4 py-2.5 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-600/70 transition-colors"
+        (click)="cargarUsuarios()"
+      >
+        Recargar lista
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div
+      *ngIf="error"
+      class="mb-4 rounded-lg border border-rose-500/60 bg-rose-500/10 px-4 py-3 text-sm text-rose-100"
+    >
+      {{ error }}
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="cargando" class="flex justify-center py-10">
+      <div
+        class="h-10 w-10 rounded-full border-4 border-slate-600 border-t-sky-400 animate-spin"
+      ></div>
+    </div>
+
+    <!-- Contenido -->
+    <div *ngIf="!cargando">
+      <div *ngIf="usuariosFiltrados.length === 0" class="text-sm text-slate-400 mt-4">
+        No se encontraron usuarios con ese criterio.
+      </div>
+
+      <!-- Desktop -->
+      <div class="hidden md:block mt-2" *ngIf="usuariosFiltrados.length > 0">
+        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/80">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-900/90 text-slate-200">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
+                  Usuario
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
+                  Correo
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
+                  Rol
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
+                  Estado
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let u of usuariosFiltrados"
+                class="border-t border-slate-800 hover:bg-slate-900/80 transition-colors"
+              >
+                <td class="px-4 py-3 text-slate-100">{{ u.nombre }} {{ u.apellidos }}</td>
+                <td class="px-4 py-3 text-slate-300">
+                  {{ u.correo }}
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <select
+                      class="px-2 py-1 rounded-md bg-slate-900 border border-slate-700 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                      [ngModel]="u.rol"
+                      (ngModelChange)="cambiarRol(u, $event)"
+                      [disabled]="guardandoId === u.id || (u.rol ?? '').toUpperCase() === 'ADMIN'"
+                    >
+                      <option *ngFor="let r of rolesDisponibles" [ngValue]="r">
+                        {{ r }}
+                      </option>
+                    </select>
+
+                    <span
+                      *ngIf="(u.rol ?? '').toUpperCase() === 'ADMIN'"
+                      class="ml-2 text-[11px] text-amber-300"
+                    >
+                      ADMIN protegido
+                    </span>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <span *ngIf="guardandoId === u.id" class="text-[11px] text-sky-300">
+                    Guardando...
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="md:hidden mt-4 space-y-3" *ngIf="usuariosFiltrados.length > 0">
+        <div
+          *ngFor="let u of usuariosFiltrados"
+          class="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-3"
+        >
+          <div>
+            <p class="text-sm font-semibold text-slate-100">{{ u.nombre }} {{ u.apellidos }}</p>
+            <p class="text-xs text-slate-400">
+              {{ u.correo }}
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <label class="block text-[11px] font-medium text-slate-300 mb-1"> Rol </label>
+              <select
+                class="w-full px-2 py-1.5 rounded-md bg-slate-900 border border-slate-700 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
+                [ngModel]="u.rol"
+                (ngModelChange)="cambiarRol(u, $event)"
+                [disabled]="guardandoId === u.id || u.rol?.toUpperCase() === 'ADMIN'"
+              >
+                <option *ngFor="let r of rolesDisponibles" [ngValue]="r">
+                  {{ r }}
+                </option>
+              </select>
+            </div>
+
+            <div class="text-[11px] text-sky-300" *ngIf="guardandoId === u.id">Guardando...</div>
+
+            <div
+              class="text-[11px] text-amber-300"
+              *ngIf="u.rol?.toUpperCase() === 'ADMIN' && guardandoId !== u.id"
+            >
+              ADMIN protegido
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

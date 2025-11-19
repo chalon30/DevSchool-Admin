@@ -1,0 +1,56 @@
+<!-- src/app/pages/login/login.html -->
+<div class="min-h-screen flex items-center justify-center px-4">
+  <div
+    class="w-full max-w-md bg-slate-900/90 border border-slate-700 rounded-2xl p-6 shadow-2xl text-slate-50"
+  >
+    <h1 class="text-xl font-semibold mb-1">DevSchool Admin</h1>
+    <p class="text-sm text-slate-400 mb-6">
+      Solo administradores y profesores pueden acceder.
+    </p>
+
+    <form (ngSubmit)="login()" class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-slate-300 mb-1">
+          Correo
+        </label>
+        <input
+          type="email"
+          [(ngModel)]="correo"
+          name="correo"
+          class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700
+                 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          placeholder="admin@devschool.com"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-300 mb-1">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          class="w-full px-3 py-2 rounded-md bg-slate-900 border border-slate-700
+                 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <div *ngIf="error" class="text-xs text-rose-300">
+        {{ error }}
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full mt-2 px-4 py-2.5 rounded-lg text-sm font-semibold
+               bg-indigo-600 hover:bg-indigo-500 text-white
+               disabled:bg-slate-700 disabled:text-slate-400
+               transition-colors"
+      >
+        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+  </div>
+</div>
