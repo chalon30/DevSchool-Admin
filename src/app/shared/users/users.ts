@@ -21,13 +21,9 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   templateUrl: './users.html',
   styleUrls: ['./users.css'],
-
-  /* IMPORTS STANDALONE */
   imports: [
     CommonModule,
     FormsModule,
-
-    /* Angular Material */
     MatTableModule,
     MatButtonModule,
     MatCardModule,
@@ -60,15 +56,14 @@ export class User implements OnInit {
   nueva: string = '';
   confirmar: string = '';
 
-  ngOnInit(): void {
-    this.listarUsuarios();
-  }
+  // UX: Indicador de acción en proceso
+  accionEnProceso?: number | null = null;
 
-  /** Cargar usuarios */
-  listarUsuarios(): void {
+  ngOnInit(): void {
     this.cargando = true;
 
-    this.usuarioService.listar().subscribe({
+    // Nos suscribimos al BehaviorSubject del servicio para recibir automáticamente cambios
+    this.usuarioService.usuarios$.subscribe({
       next: (data) => {
         this.usuarios = data;
         this.cargando = false;
@@ -78,29 +73,44 @@ export class User implements OnInit {
         this.cargando = false;
       },
     });
+
+    // Cargar la primera vez
+    this.usuarioService.listar().subscribe();
   }
 
   /** Activar usuario */
   activarUsuario(usuario: Usuario) {
     if (!usuario.id) return;
+    if (!confirm(`¿Desea activar al usuario ${usuario.nombre} ${usuario.apellidos}?`)) return;
 
+    this.accionEnProceso = usuario.id;
     this.usuarioService.activarUsuario(usuario.id).subscribe({
-      next: () => usuario.activo = true,
-      error: (err) => console.error('Error al activar usuario:', err),
+      next: () => {
+        this.accionEnProceso = null;
+        this.listarUsuarios(); // recargar tabla
+      },
+      error: (err) => {
+        console.error('Error al activar usuario:', err);
+        this.accionEnProceso = null;
+      },
     });
   }
 
   /** Eliminar usuario */
   eliminarUsuario(usuario: Usuario) {
     if (!usuario.id) return;
+    if (!confirm(`¿Eliminar al usuario ${usuario.nombre} ${usuario.apellidos}?`)) return;
 
-    if (!confirm(`¿Eliminar usuario ${usuario.nombre}?`)) return;
-
+    this.accionEnProceso = usuario.id;
     this.usuarioService.eliminarUsuario(usuario.id).subscribe({
       next: () => {
-        this.usuarios = this.usuarios.filter(u => u.id !== usuario.id);
+        this.accionEnProceso = null;
+        this.listarUsuarios(); // recargar tabla
       },
-      error: (err) => console.error('Error al eliminar usuario:', err),
+      error: (err) => {
+        console.error('Error al eliminar usuario:', err);
+        this.accionEnProceso = null;
+      },
     });
   }
 
@@ -111,24 +121,65 @@ export class User implements OnInit {
     this.confirmar = '';
   }
 
-  /** Confirmar cambio de contraseña */
+  /** Cambiar contraseña */
   cambiarContrasena(usuario: Usuario) {
+    if (!this.nueva || !this.confirmar) {
+      alert('Todos los campos son obligatorios');
+      return;
+    }
+
+    if (this.nueva.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
     if (this.nueva !== this.confirmar) {
       alert('Las contraseñas no coinciden');
       return;
     }
 
-    this.usuarioService.cambiarContrasena(usuario.id!, this.nueva, this.confirmar)
-      .subscribe({
-        next: () => {
-          alert('Contraseña actualizada correctamente');
-          this.mostrarCambioId = null;
-        },
-        error: (err) => console.error('Error al cambiar contraseña:', err),
-      });
+    this.accionEnProceso = usuario.id;
+    this.usuarioService.cambiarContrasena(usuario.id!, this.nueva, this.confirmar).subscribe({
+      next: () => {
+        alert('Contraseña actualizada correctamente');
+        // Reiniciar el formulario y recargar la tabla
+        this.mostrarCambioId = null;
+        this.nueva = '';
+        this.confirmar = '';
+        this.listarUsuarios(); // aseguramos que la tabla se actualice
+        this.accionEnProceso = null;
+      },
+      error: (err) => {
+        console.error('Error al cambiar contraseña:', err);
+        this.accionEnProceso = null;
+      },
+    });
   }
 
+  /** Cancelar cambio de contraseña */
   cancelarCambio() {
     this.mostrarCambioId = null;
+    this.nueva = '';
+    this.confirmar = '';
+  }
+
+  /** Verificar si hay acción en proceso para un usuario */
+  isAccionEnProceso(usuario: Usuario): boolean {
+    return this.accionEnProceso === usuario.id;
+  }
+
+  /** Refrescar usuarios manualmente */
+  listarUsuarios(): void {
+    this.cargando = true;
+    this.usuarioService.listar().subscribe({
+      next: (data) => {
+        this.usuarios = data;
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar usuarios:', err);
+        this.cargando = false;
+      },
+    });
   }
 }
