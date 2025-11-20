@@ -62,16 +62,38 @@ export class User implements OnInit {
     return rol === 'ADMIN' || flag;
   }
 
+  // 🔒 Saber si el usuario objetivo es el mismo admin logueado
+  esAdminActual(u: Usuario): boolean {
+    const rolActual = (this.currentUserRol ?? '').toUpperCase();
+    return (
+      rolActual === 'ADMIN' &&
+      this.esAdmin(u) &&
+      !!u.id &&
+      u.id === this.currentUserId
+    );
+  }
+
   /**
-   * ✅ Regla nueva:
-   * - PROFESOR y ADMIN pueden cambiar contraseñas
-   * - PERO nunca de un usuario ADMIN
+   * ✅ Reglas:
+   * - PROFESOR y ADMIN pueden cambiar contraseñas de ALUMNOS (no ADMIN).
+   * - ADMIN puede cambiar su propia contraseña aunque sea ADMIN.
+   * - PROFESOR nunca puede cambiar la contraseña de un ADMIN.
+   * - Nadie puede cambiar la contraseña de otro ADMIN distinto a sí mismo.
    */
   puedeCambiarPassword(usuario: Usuario): boolean {
-    // Si el target es ADMIN → prohibido
-    if (this.esAdmin(usuario)) return false;
-
     const rolActual = (this.currentUserRol ?? '').toUpperCase();
+
+    // Si el usuario objetivo es ADMIN
+    if (this.esAdmin(usuario)) {
+      // Solo el propio admin puede cambiar su contraseña
+      if (this.esAdminActual(usuario)) {
+        return true;
+      }
+      // Profesor u otro rol NO pueden cambiar contraseñas de ADMIN
+      return false;
+    }
+
+    // Si NO es admin (alumno, etc.) → admin y profesor pueden
     return rolActual === 'ADMIN' || rolActual === 'PROFESOR';
   }
 
@@ -117,7 +139,7 @@ export class User implements OnInit {
   }
 
   abrirCambioContrasena(usuario: Usuario) {
-    // ✅ Profes/admin pueden cambiar, excepto admins
+    // ✅ Profes/admin pueden cambiar, con las reglas de puedeCambiarPassword
     if (!this.puedeCambiarPassword(usuario)) {
       alert('No tienes permiso para cambiar la contraseña de este usuario.');
       return;
